@@ -23,8 +23,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;outline:none;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;}
 
-/* --- SCROLL LIVRE: Restrições de posição fixa e touch-action removidas --- */
-html,body{background:var(--bg-deep);color:#ffffff;font-family:'Montserrat',sans-serif;width:100%;height:100%;overscroll-behavior:none;transform:translate3d(0,0,0);-webkit-transform:translate3d(0,0,0);backface-visibility:hidden;-webkit-backface-visibility:hidden;}
+html,body{background:var(--bg-deep);color:#ffffff;font-family:'Montserrat',sans-serif;width:100%;height:100%;overscroll-behavior:none;}
 
 .theme-text{color:var(--main-color);}
 .logo-pulse{display:inline-block;}
@@ -39,7 +38,6 @@ button,.smart-card,.cat-item,.item,.power-btn,.key,.toggle-btn,.menu-card,.menu-
 .focused i,.focused span,.focused div{color:#000 !important;}
 .focused .fa-star{color:#FFD700 !important;}
 
-/* Fix para manter a logo sem sumir */
 @keyframes n-intro{
     0%{transform:scale(0.8);opacity:0;}
     20%{transform:scale(1);opacity:1;}
@@ -48,7 +46,7 @@ button,.smart-card,.cat-item,.item,.power-btn,.key,.toggle-btn,.menu-card,.menu-
 .n-anim{animation:n-intro 2.5s ease-in-out forwards;}
 .logo-pulse.focused span{color:#000 !important;}
 .grid-item.focused{background:#222 !important;border-color:var(--main-color) !important;}
-.grid-item.focused .title{color:var(--main-color) !important;} /* Título Gold no foco */
+.grid-item.focused .title{color:var(--main-color) !important;}
 
 #vid-box.focused{border:4px solid var(--main-color) !important;background:transparent !important;}
 #vid-box.fs,#vid-box.fs.focused{border:none !important;width:100vw !important;height:100vh !important;z-index:999999 !important;position:fixed !important;top:0 !important;left:0 !important;background:#000 !important;display:block !important;}
@@ -105,20 +103,20 @@ button,.smart-card,.cat-item,.item,.power-btn,.key,.toggle-btn,.menu-card,.menu-
 .grid-item{display:inline-block;vertical-align:top;width:18%;margin:0 1% 15px 1%;text-align:center;border:4px solid transparent;border-radius:6px;padding:5px;background:rgba(0,0,0,0.3);}
 .grid-item img{width:100%;height:auto;object-fit:contain;border-radius:4px;background:#000;}
 
-/* Fix da tremedeira */
 .grid-item .title{
     width:100%; font-size:1.6vh; color:#fff; margin-top:8px; text-align:center;
     display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2;
     overflow:hidden; text-overflow:ellipsis; height:3.6vh; line-height:1.8vh; font-weight:800;
 }
 
-.vid-box{width:100%;height:50vh;background:#000;position:relative;border-bottom:2px solid rgba(255,255,255,0.05);overflow:hidden;flex-shrink:0;touch-action:manipulation;transform:translateZ(0);}
-#player-container{width:100%;height:100%;background:#000;transform:translateZ(0);}
-video{width:100%;height:100%;object-fit:fill;background:#000;z-index:1;transform:translateZ(0);}
+/* Removido o translateZ(0) que causa falhas nativas no video de Smart TVs */
+.vid-box{width:100%;height:50vh;background:#000;position:relative;border-bottom:2px solid rgba(255,255,255,0.05);overflow:hidden;flex-shrink:0;touch-action:manipulation;}
+#player-container{width:100%;height:100%;background:#000;}
+video{width:100%;height:100%;object-fit:fill;background:#000;z-index:1;}
+
 .buffer-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;}
 .buffer-spinner{font-size:8vh;color:var(--main-color);}
 
-/* Transparente e Branco */
 #pause-layer{display:none;position:absolute;top:0;left:0;width:100%;height:100%;background:transparent;z-index:9000;align-items:center;justify-content:center;pointer-events:none;}
 #pause-layer i{font-size:18vh; color:#FFF; text-shadow: 0 4px 15px rgba(0,0,0,0.8);}
 
@@ -137,7 +135,6 @@ video{width:100%;height:100%;object-fit:fill;background:#000;z-index:1;transform
 .ep-item{padding:15px 20px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:2.2vh;font-weight:700;color:#ccc;border-radius:6px;}
 .ep-item.focused{background:var(--main-color) !important;color:#000 !important;border:4px solid #fff !important;}
 
-/* Contas e Perfis */
 .profiles-container{display:flex;gap:2vw;justify-content:center;flex-wrap:wrap;max-width:80vw;}
 .profile-card{width:14vw;height:14vw;background:#1a1a1a;border:4px solid transparent;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform 0.2s;}
 .profile-card i{font-size:6vh;color:#fff;margin-bottom:1.5vh;}
@@ -145,7 +142,6 @@ video{width:100%;height:100%;object-fit:fill;background:#000;z-index:1;transform
 .profile-card.focused{border-color:var(--main-color);background:var(--main-color);transform:scale(1.1);}
 .profile-card.focused i, .profile-card.focused .profile-name{color:#000;}
 
-/* --- SCROLLBAR CUSTOMIZADO E VISÍVEL --- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--main-color); border-radius: 4px; }
@@ -283,12 +279,108 @@ var DB={
     wipe:function(cb){if(!this.sup)return cb&&cb();try{var r=window.indexedDB.open(this.name,1);r.onupgradeneeded=function(e){e.target.result.createObjectStore('c');};r.onsuccess=function(e){var db=e.target.result;var tx=db.transaction('c','readwrite');tx.objectStore('c').clear();tx.oncomplete=function(){if(cb)cb();};tx.onerror=function(){if(cb)cb();};};r.onerror=function(){if(cb)cb();};}catch(x){if(cb)cb();}}
 };
 
-function safePlay(v){if(!v)return;try{var p=v.play();if(p!==undefined&&typeof p.catch==='function'){p.catch(function(e){});}}catch(e){}}
-function requestNativeFullscreen(e){var t=e||document.documentElement;try{if(t.requestFullscreen){var p=t.requestFullscreen();if(p!==undefined&&typeof p.catch==='function'){p.catch(function(){});}}else if(t.webkitRequestFullscreen){t.webkitRequestFullscreen();}}catch(e){}}
+function safePlay(v){
+    if(!v)return;
+    try{
+        var p=v.play();
+        if(p!==undefined&&typeof p.catch==='function'){
+            p.catch(function(e){ console.log(e); });
+        }
+    }catch(e){}
+}
+
+function requestNativeFullscreen(e){
+    var t=e||document.documentElement;
+    try{
+        if(t.requestFullscreen){
+            var p=t.requestFullscreen();
+            if(p!==undefined&&typeof p.catch==='function'){p.catch(function(){});}
+        }else if(t.webkitRequestFullscreen){t.webkitRequestFullscreen();}
+    }catch(e){}
+}
 
 var FavManager={key:'rc_favs_smart_obj',list:[],init:function(){var s=localStorage.getItem(this.key);this.list=s?JSON.parse(s):[];},toggle:function(item,mode){var id=item.stream_id||item.series_id;var exists=-1;for(var i=0;i<this.list.length;i++){if((this.list[i].stream_id||this.list[i].series_id)==id){exists=i;break;}}if(exists>-1){this.list.splice(exists,1);}else{item._mode=mode;this.list.push(item);}localStorage.setItem(this.key,JSON.stringify(this.list));},isFav:function(id){for(var i=0;i<this.list.length;i++){if((this.list[i].stream_id||this.list[i].series_id)==id)return true;}return false;}};
 
-var PlayerEngine={video:null,url:null,monitorTimer:null,lastTime:0,stallCount:0,retryCount:0,isBuffering:false,maxRetries:999999,init:function(){this.bindVideo();},bindVideo:function(){this.video=document.getElementById('player');if(!this.video)return;this.video.onerror=function(){PlayerEngine.handleError(false);};this.video.onabort=function(){PlayerEngine.handleError(false);};this.video.onstalled=function(){PlayerEngine.showBuffer();};this.video.onended=function(){if(App.currentMode==='series'){App.playNextEpisode();}else if(App.currentMode==='vod'){App.exitFull();}else{PlayerEngine.handleError(false);}};this.video.addEventListener('playing',function(){PlayerEngine.onPlaySuccess();});this.video.addEventListener('waiting',function(){PlayerEngine.showBuffer();});this.video.controls=false;},resetDOM:function(){if(this.video){try{this.video.pause();}catch(e){}this.video.removeAttribute('src');this.video.load();}},play:function(url){if(!url)return;if(this.url===url&&!this.video.error){if(this.video.paused)safePlay(this.video);return;}if(this.url&&this.url!==url){this.hardStop();this.resetDOM();}this.url=url;this.stallCount=0;this.retryCount=0;this.showBuffer();document.getElementById('pause-layer').style.display='none';if(this.video){this.video.src=url;safePlay(this.video);}this.startMonitor();},onPlaySuccess:function(){this.stallCount=0;this.retryCount=0;this.hideBuffer();},showBuffer:function(){if(App.currentMode !== 'live') return; this.isBuffering=true;var el=document.getElementById('smart-buffer');if(el)el.style.display='flex';},hideBuffer:function(){this.isBuffering=false;var el=document.getElementById('smart-buffer');if(el)el.style.display='none';},startMonitor:function(){this.stopMonitor();this.monitorTimer=setInterval(function(){var v=PlayerEngine.video;if(!v||!PlayerEngine.url||v.paused)return;if(Math.abs(v.currentTime-PlayerEngine.lastTime)<0.1){PlayerEngine.stallCount++;if(PlayerEngine.stallCount>3)PlayerEngine.showBuffer();if(PlayerEngine.stallCount>6){PlayerEngine.stallCount=0;PlayerEngine.handleError(true);}}else{PlayerEngine.stallCount=0;PlayerEngine.lastTime=v.currentTime;if(PlayerEngine.isBuffering)PlayerEngine.hideBuffer();}},2000);},stopMonitor:function(){if(this.monitorTimer)clearInterval(this.monitorTimer);},handleError:function(isStall){var limit=(App&&App.currentMode==='live')?this.maxRetries:8;if(this.retryCount<limit){this.retryCount++;this.showBuffer();this.resetDOM();var delay=Math.min(1000*Math.pow(1.5,this.retryCount),5000);setTimeout(function(){if(PlayerEngine.video&&PlayerEngine.url){PlayerEngine.video.src=PlayerEngine.url;safePlay(PlayerEngine.video);}},delay);}else{this.hardStop();}},hardStop:function(){this.stopMonitor();this.resetDOM();this.url=null;this.hideBuffer();var p=document.getElementById('pause-layer');if(p)p.style.display='none';}};
+/* UPDATE: Player Engine fortalecido para forçar carregamento nas Smart TVs */
+var PlayerEngine={
+    video:null,url:null,monitorTimer:null,lastTime:0,stallCount:0,retryCount:0,isBuffering:false,maxRetries:999999,
+    init:function(){this.bindVideo();},
+    bindVideo:function(){
+        this.video=document.getElementById('player');
+        if(!this.video)return;
+        this.video.onerror=function(){PlayerEngine.handleError(false);};
+        this.video.onabort=function(){PlayerEngine.handleError(false);};
+        this.video.onstalled=function(){PlayerEngine.showBuffer();};
+        this.video.onended=function(){
+            if(App.currentMode==='series'){App.playNextEpisode();}
+            else if(App.currentMode==='vod'){App.exitFull();}
+            else{PlayerEngine.handleError(false);}
+        };
+        this.video.addEventListener('playing',function(){PlayerEngine.onPlaySuccess();});
+        this.video.addEventListener('waiting',function(){PlayerEngine.showBuffer();});
+        this.video.controls=false;
+    },
+    resetDOM:function(){
+        if(this.video){
+            try{this.video.pause();}catch(e){}
+            this.video.removeAttribute('src');
+            try{this.video.load();}catch(e){}
+        }
+    },
+    play:function(url){
+        if(!url)return;
+        if(this.url===url&&!this.video.error){if(this.video.paused)safePlay(this.video);return;}
+        if(this.url&&this.url!==url){this.hardStop();this.resetDOM();}
+        this.url=url;this.stallCount=0;this.retryCount=0;this.showBuffer();
+        document.getElementById('pause-layer').style.display='none';
+        if(this.video){
+            this.video.src=url;
+            try{this.video.load();}catch(e){} /* Limpa buffer anterior da TV */
+            safePlay(this.video);
+        }
+        this.startMonitor();
+    },
+    onPlaySuccess:function(){this.stallCount=0;this.retryCount=0;this.hideBuffer();},
+    showBuffer:function(){if(App.currentMode !== 'live') return; this.isBuffering=true;var el=document.getElementById('smart-buffer');if(el)el.style.display='flex';},
+    hideBuffer:function(){this.isBuffering=false;var el=document.getElementById('smart-buffer');if(el)el.style.display='none';},
+    startMonitor:function(){
+        this.stopMonitor();
+        this.monitorTimer=setInterval(function(){
+            var v=PlayerEngine.video;
+            if(!v||!PlayerEngine.url||v.paused)return;
+            if(Math.abs(v.currentTime-PlayerEngine.lastTime)<0.1){
+                PlayerEngine.stallCount++;
+                if(PlayerEngine.stallCount>3)PlayerEngine.showBuffer();
+                if(PlayerEngine.stallCount>6){PlayerEngine.stallCount=0;PlayerEngine.handleError(true);}
+            }else{
+                PlayerEngine.stallCount=0;
+                PlayerEngine.lastTime=v.currentTime;
+                if(PlayerEngine.isBuffering)PlayerEngine.hideBuffer();
+            }
+        },2000);
+    },
+    stopMonitor:function(){if(this.monitorTimer)clearInterval(this.monitorTimer);},
+    handleError:function(isStall){
+        var limit=(App&&App.currentMode==='live')?this.maxRetries:8;
+        if(this.retryCount<limit){
+            this.retryCount++;this.showBuffer();this.resetDOM();
+            var delay=Math.min(1000*Math.pow(1.5,this.retryCount),5000);
+            setTimeout(function(){
+                if(PlayerEngine.video&&PlayerEngine.url){
+                    PlayerEngine.video.src=PlayerEngine.url;
+                    try{PlayerEngine.video.load();}catch(e){}
+                    safePlay(PlayerEngine.video);
+                }
+            },delay);
+        }else{
+            this.hardStop();
+        }
+    },
+    hardStop:function(){
+        this.stopMonitor();this.resetDOM();this.url=null;this.hideBuffer();
+        var p=document.getElementById('pause-layer');if(p)p.style.display='none';
+    }
+};
 
 var App={
     validCategories:null,scr:0,prevScr:0,zone:0,idx:0,lastCatIdx:-1,lastGridIdx:0,creds:{},fullData:[],playingId:null,episodesData:[],currentEpIndex:null,isMoving:false,renderEnd:0,renderedCount:0,fallbackImg:'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',cfg:{filter:false,format:'ts_native',lang:'pt'},userInfo:null,lastEnter:0,categoryDataCache:null,currentMode:'live',lastScreenSwitch:0,clockTimer:null,
@@ -338,10 +430,19 @@ var App={
             var p = this.profiles[i];
             h.push('<div class="profile-card focusable" id="prof-'+i+'" onclick="App.clickProfile('+i+')"><i class="fas fa-user-circle"></i><div class="profile-name">'+p.u+'</div></div>');
         }
-        h.push('<div class="profile-card focusable" id="prof-'+this.profiles.length+'" onclick="App.setScr(0)"><i class="fas fa-plus"></i><div class="profile-name">ADICIONAR</div></div>');
+        h.push('<div class="profile-card focusable" id="prof-'+this.profiles.length+'" onclick="App.newProfile()"><i class="fas fa-plus"></i><div class="profile-name">ADICIONAR</div></div>');
         document.getElementById('profiles-list').innerHTML = h.join('');
         this.idx = 0;
         this.updateFocus();
+    },
+
+    newProfile: function() {
+        document.getElementById('i0').value = '';
+        document.getElementById('i1').value = '';
+        document.getElementById('i2').value = '';
+        var msg = document.getElementById('msg-login');
+        if (msg) msg.innerText = '';
+        this.setScr(0);
     },
 
     clickProfile: function(i) {
@@ -503,13 +604,22 @@ var App={
         if(n!==2&&n!==4){PlayerEngine.hardStop();}
         var layers=document.querySelectorAll('.layer');
         for(var i=0;i<layers.length;i++){layers[i].classList.add('hide');}
-        if(n===0){ document.getElementById('login-layer').classList.remove('hide'); if(this.profiles.length > 0) document.getElementById('i4').classList.remove('hide'); }
+        
+        if(n===0){ 
+            document.getElementById('login-layer').classList.remove('hide'); 
+            if(this.profiles.length > 0) {
+                document.getElementById('i4').classList.remove('hide');
+            } else {
+                document.getElementById('i4').classList.add('hide');
+            }
+        }
         if(n===1)document.getElementById('menu-layer').classList.remove('hide');
         if(n===2)document.getElementById('content-layer').classList.remove('hide');
         if(n===3)document.getElementById('settings-layer').classList.remove('hide');
         if(n===4){document.getElementById('content-layer').classList.remove('hide');document.getElementById('episodes-layer').classList.remove('hide');}
         if(n===5)document.getElementById('profiles-layer').classList.remove('hide');
         if(n===6){document.getElementById('profiles-layer').classList.remove('hide');document.getElementById('profile-modal').classList.remove('hide');}
+        
         this.scr=n;if(n!==4&&n!==2){this.zone=0;this.idx=0;}else if(n===4){this.zone=4;this.idx=0;}this.updateFocus();
     },
 
@@ -623,9 +733,99 @@ var App={
         }
     },
 
-    move:function(d){var s=this.scr;if(s===0){if(d===1&&this.idx<4)this.idx++;if(d===0&&this.idx>0)this.idx--;}else if(s===5){var len=this.profiles.length;if(d===3&&this.idx<len)this.idx++;else if(d===2&&this.idx>0)this.idx--;}else if(s===6){if(d===1&&this.idx<2)this.idx++;else if(d===0&&this.idx>0)this.idx--;}else if(s===1){if(this.idx===0){if(d===3)this.idx=1;else if(d===0)this.idx=3;}else if(this.idx===1){if(d===2)this.idx=0;else if(d===3)this.idx=2;else if(d===1)this.idx=4;else if(d===0)this.idx=3;}else if(this.idx===2){if(d===2)this.idx=1;else if(d===1)this.idx=4;else if(d===0)this.idx=3;}else if(this.idx===3){if(d===1)this.idx=2;else if(d===2)this.idx=0;}else if(this.idx===4){if(d===2)this.idx=0;else if(d===0)this.idx=1;}}else if(s===3){if(this.idx===0){if(d===1)this.idx=1;}else if(this.idx===1){if(d===1)this.idx=2;else if(d===0)this.idx=0;}else if(this.idx===2){if(d===1)this.idx=4;else if(d===0)this.idx=1;}else if(this.idx===4){if(d===1)this.idx=3;else if(d===0)this.idx=2;}else if(this.idx===3){if(d===0)this.idx=4;}}else if(s===4){if(this.zone===3)return;if(this.zone===4){if(d===1&&this.idx<this.episodesData.length-1)this.idx++;else if(d===0&&this.idx>0)this.idx--;}}else if(s===2){if(this.zone===3)return;if(this.zone===0){var m=document.getElementById('cat-list').children.length-1;if(d===1&&this.idx<m)this.idx++;if(d===0&&this.idx>0)this.idx--;if(d===3&&App.fullData.length>0){this.zone=2;this.idx=0;this.checkScroll();}}else if(this.zone===2){var dL=App.fullData.length;if(this.currentMode==='live'){if(d===1){if(typeof this.idx==='number'&&this.idx<dL-1)this.idx++;}else if(d===0){if(typeof this.idx==='number'&&this.idx>0)this.idx--;else if(this.idx===0)this.zone=1;}else if(d===2){this.zone=0;this.idx=(this.lastCatIdx>-1?this.lastCatIdx:0);}else if(d===3){this.zone=3;}}else{var cl=5;if(d===1){if(this.idx+cl<dL)this.idx+=cl;else this.idx=dL-1;}else if(d===0){if(this.idx-cl>=0)this.idx-=cl;else this.zone=1;}else if(d===2){if(this.idx%cl===0){this.zone=0;this.idx=(this.lastCatIdx>-1?this.lastCatIdx:0);}else if(this.idx>0)this.idx--;}else if(d===3){if((this.idx+1)%cl!==0&&this.idx<dL-1)this.idx++;}}this.checkScroll();}else if(this.zone===1){if(d===1){this.zone=2;this.idx=0;this.checkScroll();}if(d===2){this.zone=0;this.idx=(this.lastCatIdx>-1?this.lastCatIdx:0);}}}this.updateFocus();},
+    /* UPDATE: D-Pad Perfeito, sem loops e parando nas bordas da lista/grid */
+    move:function(d){
+        var s=this.scr;
+        if(s===0){
+            var max0 = document.getElementById('i4').classList.contains('hide') ? 3 : 4;
+            if(d===1&&this.idx<max0)this.idx++;
+            if(d===0&&this.idx>0)this.idx--;
+        }else if(s===5){
+            var len=this.profiles.length;
+            if(d===3&&this.idx<len)this.idx++;
+            else if(d===2&&this.idx>0)this.idx--;
+        }else if(s===6){
+            if(d===1&&this.idx<2)this.idx++;
+            else if(d===0&&this.idx>0)this.idx--;
+        }else if(s===1){
+            if(this.idx===0){if(d===3)this.idx=1;else if(d===0)this.idx=3;}
+            else if(this.idx===1){if(d===2)this.idx=0;else if(d===3)this.idx=2;else if(d===1)this.idx=4;else if(d===0)this.idx=3;}
+            else if(this.idx===2){if(d===2)this.idx=1;else if(d===1)this.idx=4;else if(d===0)this.idx=3;}
+            else if(this.idx===3){if(d===1)this.idx=2;else if(d===2)this.idx=0;}
+            else if(this.idx===4){if(d===2)this.idx=0;else if(d===0)this.idx=1;}
+        }else if(s===3){
+            if(this.idx===0){if(d===1)this.idx=1;}
+            else if(this.idx===1){if(d===1)this.idx=2;else if(d===0)this.idx=0;}
+            else if(this.idx===2){if(d===1)this.idx=4;else if(d===0)this.idx=1;}
+            else if(this.idx===4){if(d===1)this.idx=3;else if(d===0)this.idx=2;}
+            else if(this.idx===3){if(d===0)this.idx=4;}
+        }else if(s===4){
+            if(this.zone===3)return;
+            if(this.zone===4){
+                if(d===1&&this.idx<this.episodesData.length-1)this.idx++;
+                else if(d===0&&this.idx>0)this.idx--;
+            }
+        }else if(s===2){
+            if(this.zone===3)return;
+            if(this.zone===0){
+                var m=document.getElementById('cat-list').children.length-1;
+                if(d===1&&this.idx<m)this.idx++;
+                if(d===0&&this.idx>0)this.idx--;
+                if(d===3&&App.fullData.length>0){this.zone=2;this.idx=0;this.checkScroll();}
+            }else if(this.zone===2){
+                var dL=App.fullData.length;
+                if(this.currentMode==='live'){
+                    if(d===1){if(typeof this.idx==='number'&&this.idx<dL-1)this.idx++;}
+                    else if(d===0){if(typeof this.idx==='number'&&this.idx>0)this.idx--;else if(this.idx===0)this.zone=1;}
+                    else if(d===2){this.zone=0;this.idx=(this.lastCatIdx>-1?this.lastCatIdx:0);}
+                    else if(d===3){this.zone=3;}
+                }else{
+                    var cl=5; // Filmes e Séries em 5 colunas
+                    if(d===1){
+                        if(this.idx+cl<dL) this.idx+=cl;
+                        else this.idx=dL-1; // Para no último item
+                    }
+                    else if(d===0){
+                        if(this.idx-cl>=0) this.idx-=cl;
+                        else this.zone=1;
+                    }
+                    else if(d===2){
+                        if(this.idx%cl===0){
+                            this.zone=0;
+                            this.idx=(this.lastCatIdx>-1?this.lastCatIdx:0);
+                        }else if(this.idx>0) this.idx--;
+                    }
+                    else if(d===3){
+                        if((this.idx+1)%cl!==0&&this.idx<dL-1) this.idx++;
+                    }
+                }
+                this.checkScroll();
+            }else if(this.zone===1){
+                if(d===1){this.zone=2;this.idx=0;this.checkScroll();}
+                if(d===2){this.zone=0;this.idx=(this.lastCatIdx>-1?this.lastCatIdx:0);}
+            }
+        }
+        this.updateFocus();
+    },
     
-    enter:function(){var n=new Date().getTime();if(n-this.lastEnter<400)return;this.lastEnter=n;var cS=this.scr;if(cS===0){if(this.idx===3)this.loginManual();else if(this.idx===4)this.showProfiles();else if(this.idx<3)this.move(1);}else if(cS===5){if(this.idx===this.profiles.length)this.setScr(0);else this.clickProfile(this.idx);}else if(cS===6){if(this.idx===0)this.profileAction('enter');else if(this.idx===1)this.profileAction('delete');else if(this.idx===2)this.profileAction('cancel');}else if(cS===1){if(this.idx===0)this.openMode('live');else if(this.idx===1)this.openMode('vod');else if(this.idx===2)this.openMode('series');else if(this.idx===3)this.totalReset();else if(this.idx===4)this.openSettings();}else if(cS===3){if(this.idx===0);else if(this.idx===1)this.toggleCfg('filter');else if(this.idx===2)this.forceUpdate();else if(this.idx===4)this.switchAccount();else if(this.idx===3)this.closeSettings();}else if(cS===4){if(this.zone===4)this.playEpisode(this.idx);else if(this.zone===3)this.toggleFull();}else if(cS===2){if(this.zone===0)this.catClick(this.idx,true);else if(this.zone===1)this.doSearch(true);else if(this.zone===2)this.itemClick(this.idx,true);else if(this.zone===3)this.toggleFull();}}
+    enter:function(){
+        var n=new Date().getTime();
+        if(n-this.lastEnter<400)return;
+        this.lastEnter=n;
+        var cS=this.scr;
+        if(cS===0){if(this.idx===3)this.loginManual();else if(this.idx===4)this.showProfiles();else if(this.idx<3)this.move(1);}
+        else if(cS===5){if(this.idx===this.profiles.length)this.newProfile();else this.clickProfile(this.idx);}
+        else if(cS===6){if(this.idx===0)this.profileAction('enter');else if(this.idx===1)this.profileAction('delete');else if(this.idx===2)this.profileAction('cancel');}
+        else if(cS===1){if(this.idx===0)this.openMode('live');else if(this.idx===1)this.openMode('vod');else if(this.idx===2)this.openMode('series');else if(this.idx===3)this.totalReset();else if(this.idx===4)this.openSettings();}
+        else if(cS===3){if(this.idx===0);else if(this.idx===1)this.toggleCfg('filter');else if(this.idx===2)this.forceUpdate();else if(this.idx===4)this.switchAccount();else if(this.idx===3)this.closeSettings();}
+        else if(cS===4){if(this.zone===4)this.playEpisode(this.idx);else if(this.zone===3)this.toggleFull();}
+        else if(cS===2){
+            if(this.zone===0)this.catClick(this.idx,true);
+            else if(this.zone===1)this.doSearch(true);
+            else if(this.zone===2)this.itemClick(this.idx,true);
+            else if(this.zone===3)this.toggleFull();
+        }
+    }
 };
 
 document.addEventListener('keydown', function(e) {
